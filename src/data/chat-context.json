@@ -1,0 +1,102 @@
+{
+    "bio": "I'm Melvin Prince, a passionate full-stack developer with 5+ years of experience creating modern web applications. I specialize in React, Next.js, and TypeScript, with a strong focus on performance optimization, accessibility, and user experience. I'm currently working as a Senior Frontend Developer at TechCorp Inc., where I lead development for SaaS applications serving 100k+ users.",
+    "skills": [
+        "React & Next.js development",
+        "TypeScript & JavaScript",
+        "Full-stack web development",
+        "Performance optimization",
+        "Accessibility (WCAG compliance)",
+        "UI/UX design implementation",
+        "API development & integration",
+        "Database design (PostgreSQL, MongoDB)",
+        "Cloud deployment (AWS, Vercel)",
+        "Animation & micro-interactions"
+    ],
+    "projectsIndex": [
+        {
+            "title": "E-Commerce Platform",
+            "slug": "ecommerce-platform",
+            "summary": "Full-stack e-commerce solution with modern payment integration and admin dashboard",
+            "tech": [
+                "Next.js",
+                "TypeScript",
+                "Prisma",
+                "PostgreSQL",
+                "Stripe",
+                "Tailwind CSS"
+            ]
+        },
+        {
+            "title": "Task Management App",
+            "slug": "task-management-app",
+            "summary": "Collaborative task management application with real-time updates and team features",
+            "tech": [
+                "React",
+                "Node.js",
+                "Socket.io",
+                "MongoDB",
+                "Express",
+                "Material-UI"
+            ]
+        },
+        {
+            "title": "Weather Dashboard",
+            "slug": "weather-dashboard",
+            "summary": "Interactive weather dashboard with data visualization and location-based forecasts",
+            "tech": [
+                "Vue.js",
+                "D3.js",
+                "OpenWeather API",
+                "Chart.js",
+                "PWA"
+            ]
+        }
+    ],
+    "faq": [
+        {
+            "q": "What's your experience with React?",
+            "a": "I have 4+ years of experience with React, including hooks, context, and modern patterns. I've built numerous production applications and am well-versed in performance optimization and best practices."
+        },
+        {
+            "q": "Do you work with TypeScript?",
+            "a": "Yes! TypeScript is my preferred choice for any medium to large project. I've been using it for 3+ years and appreciate the type safety and developer experience it provides."
+        },
+        {
+            "q": "What's your backend experience?",
+            "a": "I work primarily with Node.js and Express for backend development, along with databases like PostgreSQL and MongoDB. I also have experience with Python and FastAPI for API development."
+        },
+        {
+            "q": "Are you available for freelance work?",
+            "a": "I'm currently open to interesting freelance projects and consulting opportunities. Feel free to reach out through the contact form to discuss your project needs."
+        },
+        {
+            "q": "What's your approach to accessibility?",
+            "a": "Accessibility is a core part of my development process. I follow WCAG guidelines, implement proper semantic HTML, keyboard navigation, and screen reader support from the start of every project."
+        },
+        {
+            "q": "Do you have experience with animations?",
+            "a": "Yes! I work with both Framer Motion for React animations and GSAP for more complex scroll-triggered animations. I always ensure animations respect user preferences like prefers-reduced-motion."
+        },
+        {
+            "q": "What's your preferred tech stack?",
+            "a": "My go-to stack is Next.js with TypeScript, Tailwind CSS for styling, and either PostgreSQL with Prisma or MongoDB for data. For deployment, I typically use Vercel or AWS."
+        },
+        {
+            "q": "How do you handle performance optimization?",
+            "a": "I focus on Core Web Vitals, implement proper code splitting, optimize images with next/image, use dynamic imports for heavy libraries, and monitor performance with tools like Lighthouse."
+        }
+    ],
+    "contact": {
+        "email": "melvin@example.com",
+        "linkedin": "https://linkedin.com/in/melvinprince",
+        "github": "https://github.com/melvinprince",
+        "availability": "Open to new opportunities and interesting projects"
+    },
+    "quickReplies": [
+        "Tell me about your experience",
+        "What projects have you worked on?",
+        "What technologies do you use?",
+        "Are you available for work?",
+        "How can I contact you?"
+    ]
+}

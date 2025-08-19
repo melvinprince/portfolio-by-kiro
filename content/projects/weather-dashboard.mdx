@@ -1,0 +1,358 @@
+---
+title: "Weather Dashboard"
+slug: "weather-dashboard"
+summary: "Interactive weather dashboard with data visualization and location-based forecasts"
+tags: ["Data Visualization", "API Integration", "PWA"]
+year: 2023
+repoUrl: "https://github.com/melvinprince/weather-dashboard"
+liveUrl: "https://weather-viz.vercel.app"
+tech: ["Vue.js", "D3.js", "OpenWeather API", "Chart.js", "PWA"]
+cover: "https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=800&h=600&fit=crop"
+featured: true
+order: 3
+publishedAt: "2023-11-10T00:00:00Z"
+---
+
+# Weather Dashboard
+
+A comprehensive weather dashboard that provides current conditions, 7-day forecasts, and interactive maps. Features location-based weather data, historical trends, and customizable widgets for different weather metrics.
+
+## Project Overview
+
+This weather dashboard transforms complex meteorological data into an intuitive, visually appealing interface. Built as a Progressive Web App (PWA), it provides users with comprehensive weather information through interactive charts, maps, and customizable widgets.
+
+## Key Features
+
+### Current Weather Display
+
+- **Real-time Conditions**: Temperature, humidity, wind speed, and pressure
+- **Weather Icons**: Dynamic icons reflecting current conditions
+- **Location Detection**: Automatic geolocation with manual override
+- **Multiple Units**: Celsius/Fahrenheit, mph/km/h conversions
+
+### Forecasting
+
+- **7-Day Forecast**: Extended weather predictions with daily highs/lows
+- **Hourly Breakdown**: 24-hour detailed forecasts
+- **Weather Alerts**: Severe weather warnings and advisories
+- **Sunrise/Sunset**: Solar data with twilight times
+
+### Data Visualization
+
+- **Temperature Trends**: Interactive line charts showing temperature patterns
+- **Precipitation Maps**: Radar imagery with animation controls
+- **Wind Patterns**: Vector field visualization of wind data
+- **Historical Comparison**: Compare current conditions with historical averages
+
+## Technical Implementation
+
+### Frontend Architecture
+
+Built with Vue.js 3 and the Composition API for reactive data management:
+
+```typescript
+// Weather data composable
+export const useWeatherData = () => {
+  const weatherData = ref<WeatherData | null>(null);
+  const loading = ref(false);
+  const error = ref<string | null>(null);
+
+  const fetchWeather = async (lat: number, lon: number) => {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const response = await weatherAPI.getCurrentWeather(lat, lon);
+      weatherData.value = response.data;
+    } catch (err) {
+      error.value = "Failed to fetch weather data";
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  return {
+    weatherData: readonly(weatherData),
+    loading: readonly(loading),
+    error: readonly(error),
+    fetchWeather,
+  };
+};
+```
+
+### Data Visualization with D3.js
+
+Custom charts built with D3.js for maximum flexibility and performance:
+
+```typescript
+// Temperature trend chart
+const createTemperatureChart = (data: TemperatureData[]) => {
+  const svg = d3.select("#temperature-chart");
+  const margin = { top: 20, right: 30, bottom: 40, left: 50 };
+  const width = 800 - margin.left - margin.right;
+  const height = 400 - margin.top - margin.bottom;
+
+  const xScale = d3
+    .scaleTime()
+    .domain(d3.extent(data, (d) => d.timestamp))
+    .range([0, width]);
+
+  const yScale = d3
+    .scaleLinear()
+    .domain(d3.extent(data, (d) => d.temperature))
+    .range([height, 0]);
+
+  const line = d3
+    .line<TemperatureData>()
+    .x((d) => xScale(d.timestamp))
+    .y((d) => yScale(d.temperature))
+    .curve(d3.curveMonotoneX);
+
+  svg
+    .append("path")
+    .datum(data)
+    .attr("class", "temperature-line")
+    .attr("d", line);
+};
+```
+
+### PWA Implementation
+
+Service worker for offline functionality and caching:
+
+```javascript
+// Service worker for caching weather data
+self.addEventListener("fetch", (event) => {
+  if (event.request.url.includes("/api/weather")) {
+    event.respondWith(
+      caches.open("weather-cache-v1").then((cache) => {
+        return cache.match(event.request).then((response) => {
+          if (response) {
+            // Serve from cache, but update in background
+            fetch(event.request).then((fetchResponse) => {
+              cache.put(event.request, fetchResponse.clone());
+            });
+            return response;
+          }
+
+          // Fetch and cache new data
+          return fetch(event.request).then((fetchResponse) => {
+            cache.put(event.request, fetchResponse.clone());
+            return fetchResponse;
+          });
+        });
+      })
+    );
+  }
+});
+```
+
+## API Integration Strategy
+
+### Multiple Weather Sources
+
+Integrated multiple APIs for comprehensive data coverage:
+
+- **OpenWeatherMap**: Primary weather data and forecasts
+- **WeatherAPI**: Backup source and historical data
+- **MapBox**: Satellite imagery and map tiles
+- **NOAA**: Severe weather alerts (US regions)
+
+### Data Aggregation
+
+```typescript
+class WeatherAggregator {
+  async getComprehensiveWeather(lat: number, lon: number) {
+    const [current, forecast, alerts] = await Promise.allSettled([
+      this.openWeatherAPI.getCurrent(lat, lon),
+      this.weatherAPI.getForecast(lat, lon),
+      this.noaaAPI.getAlerts(lat, lon),
+    ]);
+
+    return {
+      current: current.status === "fulfilled" ? current.value : null,
+      forecast: forecast.status === "fulfilled" ? forecast.value : null,
+      alerts: alerts.status === "fulfilled" ? alerts.value : [],
+    };
+  }
+}
+```
+
+## Challenges & Solutions
+
+### Challenge 1: Multiple API Integration
+
+**Problem**: Different weather APIs have varying data formats and reliability.
+
+**Solution**: Created a unified data adapter layer:
+
+- Standardized data models across all sources
+- Fallback mechanisms for API failures
+- Data validation and sanitization
+
+### Challenge 2: Real-time Data Updates
+
+**Problem**: Keeping weather data current without overwhelming API rate limits.
+
+**Solution**: Implemented smart caching and update strategies:
+
+- Exponential backoff for failed requests
+- Conditional updates based on data age
+- Background sync for PWA offline support
+
+### Challenge 3: Performance with Large Datasets
+
+**Problem**: Rendering historical weather data caused performance issues.
+
+**Solution**: Optimized data visualization:
+
+- Canvas rendering for large datasets
+- Data decimation for zoom levels
+- Virtual scrolling for data tables
+
+## Performance Optimizations
+
+### Frontend Performance
+
+- **Lazy Loading**: Charts and maps load on demand
+- **Code Splitting**: Route-based and feature-based splitting
+- **Image Optimization**: WebP format with fallbacks
+- **Bundle Analysis**: Webpack bundle analyzer for size optimization
+
+### Data Management
+
+- **Caching Strategy**: Multi-layer caching (browser, service worker, CDN)
+- **Data Compression**: Gzip compression for API responses
+- **Efficient Updates**: Only fetch changed data
+- **Background Sync**: Update data when connection is available
+
+## Results & Impact
+
+### Performance Metrics
+
+- **95+ Lighthouse Score**: Excellent performance across all metrics
+- **Sub-2s Load Time**: Fast initial page load
+- **Offline Functionality**: Full feature access without internet
+- **Cross-platform**: Consistent experience on desktop and mobile
+
+### User Experience
+
+- **Responsive Design**: Optimized for all screen sizes
+- **Accessibility**: WCAG 2.1 AA compliance
+- **Internationalization**: Support for multiple languages and units
+- **Dark Mode**: Automatic theme switching based on system preference
+
+## Code Examples
+
+### Reactive Weather Widget
+
+```vue
+<template>
+  <div class="weather-widget" :class="{ loading: loading }">
+    <div v-if="weatherData" class="weather-content">
+      <h3>{{ weatherData.location.name }}</h3>
+      <div class="temperature">
+        {{ Math.round(weatherData.current.temp) }}°{{ unit }}
+      </div>
+      <div class="condition">
+        <img
+          :src="weatherData.current.icon"
+          :alt="weatherData.current.description"
+        />
+        <span>{{ weatherData.current.description }}</span>
+      </div>
+    </div>
+    <div v-else-if="error" class="error-state">
+      <p>{{ error }}</p>
+      <button @click="retry">Retry</button>
+    </div>
+    <div v-else class="loading-skeleton">
+      <!-- Loading skeleton -->
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from "vue";
+import { useWeatherData } from "@/composables/useWeatherData";
+import { useGeolocation } from "@/composables/useGeolocation";
+
+const { weatherData, loading, error, fetchWeather } = useWeatherData();
+const { coordinates } = useGeolocation();
+
+const unit = computed(() =>
+  weatherData.value?.units === "metric" ? "C" : "F"
+);
+
+const retry = () => {
+  if (coordinates.value) {
+    fetchWeather(coordinates.value.lat, coordinates.value.lon);
+  }
+};
+</script>
+```
+
+### Interactive Map Component
+
+```typescript
+// Weather map with overlay controls
+export class WeatherMap {
+  private map: mapboxgl.Map;
+  private weatherLayer: mapboxgl.Layer | null = null;
+
+  constructor(container: string) {
+    this.map = new mapboxgl.Map({
+      container,
+      style: "mapbox://styles/mapbox/satellite-v9",
+      center: [-74.5, 40],
+      zoom: 9,
+    });
+  }
+
+  addWeatherLayer(type: "precipitation" | "temperature" | "wind") {
+    if (this.weatherLayer) {
+      this.map.removeLayer(this.weatherLayer.id);
+    }
+
+    this.weatherLayer = {
+      id: `weather-${type}`,
+      type: "raster",
+      source: {
+        type: "raster",
+        tiles: [`https://api.weather.com/v1/maps/${type}/{z}/{x}/{y}.png`],
+        tileSize: 256,
+      },
+      paint: {
+        "raster-opacity": 0.7,
+      },
+    };
+
+    this.map.addLayer(this.weatherLayer);
+  }
+}
+```
+
+## Future Enhancements
+
+### Planned Features
+
+- **Machine Learning**: Weather prediction improvements using historical data
+- **Social Features**: Share weather conditions and photos
+- **Agriculture Mode**: Specialized data for farming applications
+- **Air Quality**: Integration with pollution and allergen data
+
+### Technical Roadmap
+
+- **GraphQL**: More efficient data fetching
+- **WebGL**: Hardware-accelerated visualizations
+- **WebAssembly**: Performance-critical calculations
+- **Real-time Streaming**: WebSocket connections for live updates
+
+## Technology Stack
+
+- **Frontend**: Vue.js 3, TypeScript, Vite, Pinia
+- **Visualization**: D3.js, Chart.js, Mapbox GL JS
+- **PWA**: Workbox, Service Workers, Web App Manifest
+- **APIs**: OpenWeatherMap, WeatherAPI, Mapbox, NOAA
+- **Deployment**: Netlify with edge functions
+- **Monitoring**: Sentry for error tracking, Google Analytics
