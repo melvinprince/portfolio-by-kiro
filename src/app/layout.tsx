@@ -17,6 +17,7 @@ import {
   generateOrganizationSchema,
   generateStructuredData,
 } from "@/lib/structured-data";
+import { Analytics } from "@vercel/analytics/next";
 import { seoConfig } from "@/lib/seo-config";
 
 const inter = Inter({
@@ -136,6 +137,7 @@ export default function RootLayout({
           </PerformanceProvider>
         </AnalyticsProvider>
         <StructuredData data={structuredData} />
+        <Analytics />
       </body>
     </html>
   );
